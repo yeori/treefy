@@ -8,11 +8,15 @@ import github.yeori.treefy.TreefyException;
 public class Rules {
 
 	private static final IPropertyRule EMPTY_RULE = (propName, level) -> false;
+    private static final RuleInflater INFLATER = new RuleInflater();
 
 	public static IPropertyRule parseRules(String ... ruleSpecs) {
 		List<IPropertyRule> rules = new ArrayList<>();
 		for (String spec : ruleSpecs) {
-			rules.add(new ExactMatchingRule(spec.trim()));
+			List<String> inflatedRules = INFLATER.inflate(spec.trim());
+			for (String _rule: inflatedRules) {
+				rules.add(new ExactMatchingRule(_rule));
+			}
 		}
 		return new CompositeRule(rules);
 	}

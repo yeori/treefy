@@ -1,6 +1,7 @@
 package github.yeori.treefy;
 
 import github.yeori.treefy.sample.Column;
+import github.yeori.treefy.sample.Schema;
 import github.yeori.treefy.sample.Table;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,15 @@ public class PoJoTreefyTest {
 
     @Test
     public void test_양방향참조() {
-        Table table = new Table("users");
+        /*
+         *  +---------+         +----------+
+         *  |  TABLE  | -----<> |  COLUMN  |
+         *  +---------+         +----------+
+         *       ^                   |
+         *       |                   |
+         *       +-------------------+
+         */
+        Table table = new Table("users", "utf-8");
         Column name = new Column("user_name", "VARCHAR(50)", 0, table);
         Column email = new Column("user_email", "VARCHAR(50)", 1, table);
         table.setColumns(Arrays.asList(name, email));
@@ -45,5 +54,21 @@ public class PoJoTreefyTest {
         assertNotNull(tableRef);
         assertNull(tableRef.getColumns());
         assertNotNulls(tableRef.getName());
+    }
+    @Test
+    public void test_property_group() {
+        Schema schema = new Schema("hello-db");
+
+        Table table = new Table("users", "euc-kr");
+        table.setSchema(schema);
+        schema.setTables(Arrays.asList(table));
+
+        Column name = new Column("user_name", "VARCHAR(50)", 0, table);
+        Column email = new Column("user_email", "VARCHAR(50)", 1, table);
+        table.setColumns(Arrays.asList(name, email));
+
+        Column cloned = treefy.treefy(email, "table.(columns, schema.tables)");
+//        Column cloned = treefy.treefy(email, "table.schema.tables", "table.columns");
+        assertNulls(cloned.getTable().getSchema().getTables(), cloned.getTable().getColumns());
     }
 }
