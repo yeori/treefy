@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,7 +20,8 @@ public class Treefy {
 		CharSequence.class,
 		LocalDateTime.class,
 		LocalDate.class,
-		LocalTime.class
+		LocalTime.class,
+        Instant.class
 	));
 	
 	public <T> T treefy(T data) {
